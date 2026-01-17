@@ -49,7 +49,7 @@ app.MapPost("/api/video/upload", async (HttpRequest request) =>
     if (file.Length > 5_000_000_000)
         return Results.BadRequest("File too large");
 
-    string videoId = await saveFile.saveFileAsync(file);
+    string videoId = await saveFile.SaveFileAsync(file);
 
     return Results.Ok( new
         {

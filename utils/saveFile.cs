@@ -2,7 +2,7 @@
 
 class saveFile
 {
-    public static async Task<string> saveFileAsync(IFormFile  file)
+    public static async Task<string> SaveFileAsync(IFormFile  file)
     {
         var videoId = Guid.NewGuid().ToString();
 
