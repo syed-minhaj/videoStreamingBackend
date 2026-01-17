@@ -26,12 +26,6 @@ app.UseHttpsRedirection();
 
 
 
-app.MapGet("/", () =>
-{
-    
-    return "hello";
-});
-
 app.MapPost("/api/video/upload", async (HttpRequest request) =>
 {
     if (!request.HasFormContentType)
