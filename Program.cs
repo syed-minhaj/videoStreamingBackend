@@ -1,4 +1,7 @@
+
+using VideoStreamingBackend.Utils;
 using Microsoft.AspNetCore.Http.Features;
+using VideoStreamingBackend.Interface;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
@@ -11,6 +14,10 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxRequestBodySize = 5L * 1024 * 1024 * 1024; // 5 GB
 });
+
+
+builder.Services.AddSingleton<IVideoJobQueue , VideoJobQueue>();
+builder.Services.AddHostedService<VideoProccessingWorker>();
 
 var app = builder.Build();
 
@@ -43,7 +50,10 @@ app.MapPost("/api/video/upload", async (HttpRequest request) =>
     if (file.Length > 5_000_000_000)
         return Results.BadRequest("File too large");
 
-    string videoId = await saveFile.SaveFileAsync(file);
+    (string videoId , string filePath) = await SaveFile.SaveFileAsync(file);
+
+    var queue = app.Services.GetRequiredService<IVideoJobQueue>();
+    queue.Enqueue(new VideoJob(videoId , filePath));
 
     return Results.Ok( new
         {

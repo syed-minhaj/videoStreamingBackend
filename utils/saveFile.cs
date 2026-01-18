@@ -1,8 +1,8 @@
+namespace VideoStreamingBackend.Utils;
 
-
-class saveFile
+class SaveFile
 {
-    public static async Task<string> SaveFileAsync(IFormFile  file)
+    public static async Task<(string , string)> SaveFileAsync(IFormFile  file)
     {
         var videoId = Guid.NewGuid().ToString();
 
@@ -15,6 +15,6 @@ class saveFile
         await using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream);
 
-        return videoId;
+        return (videoId , filePath);
     }
 }
