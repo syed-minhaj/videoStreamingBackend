@@ -78,7 +78,7 @@ public class VideoProccessingWorker : BackgroundService
         await process.WaitForExitAsync();
 
 
-        File.Delete(job.InputPath);
+        //File.Delete(job.InputPath);
     }
 
 

@@ -2,6 +2,9 @@
 using VideoStreamingBackend.Utils;
 using Microsoft.AspNetCore.Http.Features;
 using VideoStreamingBackend.Interface;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.StaticFiles;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
@@ -20,6 +23,18 @@ builder.Services.AddSingleton<IVideoJobQueue , VideoJobQueue>();
 builder.Services.AddHostedService<VideoProccessingWorker>();
 
 var app = builder.Build();
+
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".m3u8"] = "application/vnd.apple.mpegurl";
+provider.Mappings[".ts"]   = "video/MP2T";
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "storage")),
+    RequestPath = "/storage",
+    ContentTypeProvider = provider
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
